@@ -1,0 +1,59 @@
+import unittest
+
+from converters import text_node_to_html_node
+from textnode import TextNode, TextType
+
+class TestTextToHTML(unittest.TestCase):
+    def test_text(self):
+        node = TextNode("This is a text node", TextType.TEXT)
+        html_node = text_node_to_html_node(node)
+        self.assertEqual(html_node.tag, None)
+        self.assertEqual(html_node.value, "This is a text node")
+        
+    def test_bold(self):
+        node = TextNode("This is a text node", TextType.BOLD)
+        html_node = text_node_to_html_node(node)
+        #self.assertEqual(html_node.tag, "b")
+        self.assertEqual(html_node.to_html(), "<b>This is a text node</b>")
+
+    def test_italic(self):
+        node = TextNode("This is a text node", TextType.ITALIC)
+        html_node = text_node_to_html_node(node)
+        #self.assertEqual(html_node.tag, None)
+        self.assertEqual(html_node.to_html(), "<i>This is a text node</i>")
+    
+    def test_code(self):
+        node = TextNode("This is a text node", TextType.CODE)
+        html_node = text_node_to_html_node(node)
+        #self.assertEqual(html_node.tag, None)
+        self.assertEqual(html_node.to_html(), "<code>This is a text node</code>")
+    
+    def test_link(self):
+        node = TextNode("This is a text node", TextType.LINK, "https://example.com")
+        html_node = text_node_to_html_node(node)
+        #self.assertEqual(html_node.tag, None)
+        self.assertEqual(html_node.to_html(), '<a href="https://example.com">This is a text node</a>')
+    
+    def test_image(self):
+        node = TextNode("This is a text node", TextType.IMAGE, "https://example.com")
+        html_node = text_node_to_html_node(node)
+        #self.assertEqual(html_node.tag, None)
+        self.assertEqual(html_node.to_html(), '<img src="https://example.com" alt="This is a text node"></img>')
+
+    def test_unhandled_type(self):
+        node = TextNode("This is a text node", type="div")
+        self.assertRaises(Exception, text_node_to_html_node, node)
+
+    def test_empty_text(self):
+        node = TextNode("", TextType.BOLD)
+        html_node = text_node_to_html_node(node)
+        self.assertEqual(html_node.to_html(), "<b></b>")
+    
+    def test_none_text(self):
+        node = TextNode(None, TextType.BOLD)
+        html_node = text_node_to_html_node(node)
+        self.assertRaises(ValueError, html_node.to_html)
+
+
+if __name__ == "__main__":
+    unittest.main()
