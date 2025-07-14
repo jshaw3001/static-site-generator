@@ -28,7 +28,6 @@ def markdown_to_html_node(markdown):
         type = block_to_block_type(block)
         children.append(create_html_node(block, type))
     return ParentNode("div", children)
-    
 
 def create_html_node(block, type):
     match type:
@@ -54,9 +53,7 @@ def create_html_node(block, type):
         case BlockType.ORDERED_LIST:
             list_items = create_ordered_list_items(block)
             return ParentNode("ol", list_items)
-            
-            
-        
+
 def text_to_children(text):
     text_nodes = text_to_textnodes(text)
     html_nodes = []
