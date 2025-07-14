@@ -2,9 +2,14 @@ from textnode import TextNode, TextType
 import os
 import shutil
 from generate import generate_page
+from sys import argv
 
 dir_path_static = "./static"
-dir_path_public = "./public"
+dir_path_public = "./docs"
+if len(argv) > 1:
+    basepath = argv[1]
+else:
+    basepath = "/"
 
 def main():
     print("Deleting public directory...")
@@ -14,7 +19,7 @@ def main():
     print("Copying static files to public directory...")
     copy_static(dir_path_static, dir_path_public)
     print("Searching for markdown files in content directory...")
-    finder_to_generator("content/")
+    finder_to_generator("content/", basepath)
 
 
 def copy_static(source_dir_path, dest_dir_path):
@@ -30,7 +35,7 @@ def copy_static(source_dir_path, dest_dir_path):
         else:
             copy_static(from_path, dest_path)
 
-def finder_to_generator(directory_path):
+def finder_to_generator(directory_path, basepath):
     if os.path.exists(directory_path):
         for filename in os.listdir(directory_path):
             full_path = os.path.join(directory_path, filename)
@@ -38,12 +43,12 @@ def finder_to_generator(directory_path):
             if os.path.isfile(full_path):
                 if filename.endswith(".md"):
                     html_filename = filename.replace(".md", ".html")
-                    public_dir_path = directory_path.replace("content", "public")
+                    public_dir_path = directory_path.replace("content", "docs")
                     dest_full_path = os.path.join(public_dir_path, html_filename)
                     os.makedirs(public_dir_path, exist_ok=True)
-                    generate_page(full_path, "template.html", dest_full_path)
+                    generate_page(full_path, "template.html", dest_full_path, basepath)
             else:
-                finder_to_generator(full_path)
+                finder_to_generator(full_path, basepath)
 
 
 if __name__ == "__main__":

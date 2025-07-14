@@ -3,7 +3,7 @@ from converters import markdown_to_html_node
 from htmlnode import HTMLNode, LeafNode, ParentNode
 from extract_markdown import extract_title
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     if os.path.exists(from_path):
         with open(from_path, "r") as f:
@@ -20,6 +20,8 @@ def generate_page(from_path, template_path, dest_path):
     page_title = extract_title(markdown_text)
     html = template_text.replace("{{ Title }}", page_title)
     html = html.replace("{{ Content }}", html_content)
+    html = html.replace(f'href="/', f'href="{basepath}')
+    html = html.replace(f'src="/', f'src="{basepath}')
     if not os.path.exists(os.path.dirname(dest_path)):
         os.mkdir(os.path.dirname(dest_path))
     with open(dest_path, "w") as f:
